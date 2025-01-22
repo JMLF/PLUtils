@@ -1,3 +1,6 @@
+"
+Some methods to gather insights on FamixPython models
+"
 Class {
 	#name : 'PLUtils',
 	#superclass : 'Object',
@@ -17,26 +20,26 @@ PLUtils class >> load: aFilereference [
 	  
 ]
 
-{ #category : 'testing' }
-PLUtils >> allFuncOrMethodsInvocationWithArg: anArg [
+{ #category : 'invocation' }
+PLUtils >> allFuncOrMethodsInvocationWithArgName: anArgName [
 
 	| invocations func |
 	invocations := model allInvocations.
-	invocations := invocations select: [ :i | i isArg: anArg ].
+	invocations := invocations select: [ :i | i isArgNameInInvocation: anArgName ].
 	func := invocations flatCollect: [ :i |
 		  i candidates reject: [ :c | c isShadowed ] ].
 	^func "Voir pour renvoyer l'objet directment si size = 1"
 ]
 
-{ #category : 'testing' }
-PLUtils >> allInvocationsWithArg: anArg [
+{ #category : 'invocation' }
+PLUtils >> allInvocationsWithArgName: anArgName [
 
 	| invocations |
 	invocations := model allInvocations.
-	^invocations select: [ :i | i isArg: anArg ]
+	^ invocations select: [ :i | i isArgNameInInvocation: anArgName ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'import' }
 PLUtils >> checkFromImportUsage [
 
 	| imports unusedImport |
@@ -52,51 +55,53 @@ PLUtils >> checkFromImportUsage [
 		  ifFalse: [ unusedImport ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'import' }
 PLUtils >> getFromImport [
 
 	^ model allImports select: [ :i | i isFromImport ]
 ]
 
-{ #category : 'as yet unclassified' }
-PLUtils >> getFunctionWithUnusedParams [
+{ #category : 'function' }
+PLUtils >> getFunctionWithStarParams [
+"Should check all star params"
 
-	^ model allFunctions select: [ :m | m isStub not and: [m signature includesSubstring: '*_'] ]
+	^ model allFunctions select: [ :m |
+		  m isStub not and: [ m signature includesSubstring: '*_' ] ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'function' }
 PLUtils >> getFunctionsWithName: aFunctionName [
 
 	^ model allFunctions select: [ :i | i name = aFunctionName ]
 ]
 
-{ #category : 'as yet unclassified' }
-PLUtils >> getMethodsWithUnusedParams [
+{ #category : 'method' }
+PLUtils >> getMethodsWithStarParams [
 
 	^ model allMethods select: [ :m |
 		  m signature includesSubstring: '*_' ] "A voir pour le backslash"
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'access' }
 PLUtils >> getMultipleAccessedVars [
 
 	^ (self getVarAccessesOccurence valuesAndCounts reject: [ :assoc |
 		   assoc value = 1 ]) keys
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'invocation' }
 PLUtils >> getSpecificInvocation: aFunctionName [
 
 	^ model allInvocations detect: [ :i | i invokedEntity name = aFunctionName ] ifNone: [ nil ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'function' }
 PLUtils >> getTTSFunction [
 
 	^ self getFunctionsWithName: 'train_test_split'
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'invocation' }
 PLUtils >> getTTSInvocationPos [
 
 	| ttsFunction |
@@ -105,7 +110,7 @@ PLUtils >> getTTSInvocationPos [
 		  (f incomingInvocations at: 1) sourceAnchor endPos ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'access' }
 PLUtils >> getTestVarAccess [
 
 	^ model allAccesses select: [ :a |
@@ -113,7 +118,7 @@ PLUtils >> getTestVarAccess [
 			  a variable name endsWithAnyOf: { 'test'. 'TEST'. 'Test' } ] ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'access' }
 PLUtils >> getTestVarAccessPos [
 
 	| access |
@@ -121,13 +126,13 @@ PLUtils >> getTestVarAccessPos [
 	^ access collect: [ :a | a sourceAnchor endPos ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'access' }
 PLUtils >> getVarAccessesOccurence [
 
 	^ (model allAccesses collect: #variable) asBag
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'access' }
 PLUtils >> isTestSetOverwrite [
 	"Utiliser isEmpty plutot que > "
 	| testVarPos ttsPos overwrite |

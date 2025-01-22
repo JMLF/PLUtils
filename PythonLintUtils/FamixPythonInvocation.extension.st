@@ -13,7 +13,7 @@ FamixPythonInvocation >> arguments [
 ]
 
 { #category : '*PythonLintUtils' }
-FamixPythonInvocation >> isArg: anArgName [
+FamixPythonInvocation >> isArgNameInInvocation: anArgName [
 
 	^ self arguments anySatisfy: [ :a | a = anArgName ]
 ]
