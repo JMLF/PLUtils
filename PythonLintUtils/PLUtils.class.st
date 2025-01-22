@@ -78,6 +78,13 @@ PLUtils >> getMethodsWithUnusedParams [
 ]
 
 { #category : 'as yet unclassified' }
+PLUtils >> getMultipleAccessedVars [
+
+	^ (self getVarAccessesOccurence valuesAndCounts reject: [ :assoc |
+		   assoc value = 1 ]) keys
+]
+
+{ #category : 'as yet unclassified' }
 PLUtils >> getSpecificInvocation: aFunctionName [
 
 	^ model allInvocations detect: [ :i | i invokedEntity name = aFunctionName ] ifNone: [ nil ]
@@ -112,6 +119,12 @@ PLUtils >> getTestVarAccessPos [
 	| access |
 	access := self getTestVarAccess.	
 	^ access collect: [ :a | a sourceAnchor endPos ]
+]
+
+{ #category : 'as yet unclassified' }
+PLUtils >> getVarAccessesOccurence [
+
+	^ (model allAccesses collect: #variable) asBag
 ]
 
 { #category : 'as yet unclassified' }
