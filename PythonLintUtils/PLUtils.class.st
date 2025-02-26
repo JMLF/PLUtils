@@ -145,6 +145,40 @@ PLUtils >> getVarAccessesOccurence [
 	^ (model allAccesses collect: #variable) asBag
 ]
 
+{ #category : 'invocation' }
+PLUtils >> isEntityNameAPackageInvoked: anEntityName [
+
+	^ model allInvocations 
+		anySatisfy: [ :i | 
+			i candidates 
+				anySatisfy: [ :c | 
+					| parent |
+					(c respondsTo: #parentPackage) 
+						and: [ 
+							parent := c parentPackage.
+							parent notNil 
+								and: [ parent name = anEntityName ]
+						]
+				]
+		]
+
+]
+
+{ #category : 'invocation' }
+PLUtils >> isEntityNameInvoked: aFunctionName [
+
+	^ model allInvocations anySatisfy: [ :i | i invokedEntity name = aFunctionName ]
+]
+
+{ #category : 'invocation' }
+PLUtils >> isStringUsedIsInArgs: aString [
+	^ model allInvocations 
+		anySatisfy: [ :i | 
+			i computeArgs 
+				anySatisfy: [ :arg | arg includesSubstring: aString ]
+		]
+]
+
 { #category : 'access' }
 PLUtils >> isTestSetOverwrite [
 	"Utiliser isEmpty plutot que > "
