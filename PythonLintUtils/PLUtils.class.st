@@ -31,6 +31,19 @@ PLUtils >> allFuncOrMethodsInvocationWithArgName: anArgName [
 	^func "Voir pour renvoyer l'objet directment si size = 1"
 ]
 
+{ #category : 'as yet unclassified' }
+PLUtils >> allImportedEntitiesName [
+
+	| imports res |
+	imports := model allImports.
+	
+	res := imports flatCollect: [ :i | 
+		{ i importedEntity name. (i alias ifNil: [ nil ]) } select: [ :e | e notNil ] 
+	].
+	^ res
+
+]
+
 { #category : 'invocation' }
 PLUtils >> allInvocationsWithArgName: anArgName [
 
